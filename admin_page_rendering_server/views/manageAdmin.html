@@ -1,0 +1,153 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container-fluid row mt-5">
+  <div class="col-12 px-0 border-bottom pb-3 mb-5">
+    <h2>관리자 관리</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">아이디</th>
+          <th scope="col">관리 식당</th>
+          <th scope="col">관리자 유형</th>
+          <th scope="col">가입 일자</th>
+          <th scope="col">액션</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for admin in adminList %}
+        <tr data-id="{{admin.admin_id}}">
+          <td>{{admin.admin_id}}</td>
+          <td>{{admin.cafeteria_name}}</td>
+          {% if admin.admin_type === 0 %}
+          <td>총 관리자</td>
+          {% elif admin.admin_type === 1 %}
+          <td>주방 관리자</td>
+          {% elif admin.admin_type === 2 %}
+          <td>사무 관리자</td>
+          {% endif %}
+          <td>{{admin.created_at}}</td>
+          <td>
+            <div class="d-flex-justify-content-start">
+              {%if admin.approval_status === false %}
+              <button
+                class="btn btn-success action-btn approval-btn"
+                data-id="{{admin.admin_id}}"
+              >
+                가입 승인
+              </button>
+              {% endif %} {% if admin.admin_type !== 0 %}
+              <button
+                class="btn btn-danger action-btn unregister-btn"
+                data-id="{{admin.admin_id}}"
+              >
+                탈퇴
+              </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="modal fade" tabindex="-1" id="notice-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary confirm-btn"></button>
+          <button type="button" class="btn btn-secondary cancel-btn">
+            취소
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block script %}
+<script>
+  // 관리자 페이지 가입승인, 탈퇴 처리 버튼
+  // 가입승인, 탈퇴 버튼 클릭 시 모달 창을 띄운다.
+  const $noticeModal = $("#notice-modal");
+
+  $noticeModal.on("hidden.bs.modal", function (event) {
+    $noticeModal.removeAttr("data-id");
+  });
+
+  $(".action-btn").click(function (event) {
+    event.preventDefault();
+    const adminId = $(this).attr("data-id");
+    $noticeModal.attr("data-id", adminId);
+
+    if ($(event.currentTarget)[0].classList.contains("approval-btn")) {
+      // 가입 승인 버튼을 누른 경우
+      $noticeModal.find(".modal-title").text("가입 승인");
+      $noticeModal.find(".modal-body").html("가입 승인하시겠습니까?");
+      $noticeModal
+        .find(".confirm-btn")
+        .removeClass("modal-unregister-btn")
+        .addClass("modal-approval-btn")
+        .html("승인");
+    } else if ($(event.currentTarget)[0].classList.contains("unregister-btn")) {
+      // 탈퇴 버튼을 누른 경우
+      $noticeModal.find(".modal-title").html("회원 탈퇴");
+      $noticeModal.find(".modal-body").html("회원 탈퇴시키겠습니까?");
+      $noticeModal
+        .find(".confirm-btn")
+        .removeClass("modal-approval-btn")
+        .addClass("modal-unregister-btn")
+        .html("탈퇴");
+    }
+
+    $noticeModal.modal("show");
+  });
+
+  $("#notice-modal .confirm-btn").click(function (event) {
+    const adminId = $noticeModal.attr("data-id");
+    console.log(adminId);
+    if ($(this)[0].classList.contains("modal-approval-btn")) {
+      axios.patch("/admin", {
+        requestApproval: true,
+        admin_id: adminId
+      }).then(function (response) {
+        $noticeModal.modal("hide");
+        $(`.approval-btn[data-id="${adminId}"]`).remove();
+      }).catch(function (error) {
+        console.error(error);
+      });
+    } else if ($(this)[0].classList.contains("modal-unregister-btn")) {
+      console.log("탈퇴 요청");
+      console.log(adminId);
+      axios.delete("/admin", {
+        data: {
+          adminId: adminId
+        }
+      }).then(function (response) {
+        $noticeModal.modal("hide");
+        $(`tr[data-id="${adminId}"]`).remove();
+      }).catch(function (error) {
+        console.erorr(erorr);
+      });
+    }
+  });
+
+  // 모달 취소 버튼 클릭 시 모달 닫기 및 모달 닫기에 따른 이벤트(hidden.bs.modal) 실행
+  $(".cancel-btn").click(function (event) {
+    $noticeModal.modal("hide");
+  });
+</script>
+{% endblock %}

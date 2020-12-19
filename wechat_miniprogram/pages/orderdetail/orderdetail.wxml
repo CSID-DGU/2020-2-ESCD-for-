@@ -1,0 +1,57 @@
+<!--pages/detail/detail.wxml-->
+<!-- <text>pages/detail/detail.wxml</text> -->
+
+<cu-custom bgColor="bg-gradual-orange" isBack="{{true}}">
+  <view slot="backText">往后</view>
+  <view slot="content">订单历史</view>
+</cu-custom>
+
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">订单历史</text>
+    <text class="text-ABC text-green">Order</text>
+  </view>
+</view>
+<view wx:if="{{!isReady}}" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+  <van-loading color="rgb(243, 123, 29)" size="50px"/>
+</view>
+<view wx:else>
+  <view class="bg-white padding-xs shadow-blur" style="margin-bottom: 45px;">
+    <view class="text-xl mb-1 text-orange" style="font-size: large; text-align: center;">
+      餐票编号: {{orderDetails[0].ticketNumber}}
+    </view>
+    <view class="d-flex justify-content-center mb-2">
+      <view wx:for="{{orderDetails}}" wx:for-item="item" class="image-box">
+        <image src="{{item.menuImage}}"></image>
+      </view>
+    </view>
+    <view class="text-xl mb-1 text-orange" style="font-size: large; text-align: center;">
+      {{resultMessage}}
+    </view>
+    <view class="d-flex justify-content-center flex-column border-top border-bottom p-0" style="margin: 0 10px;">
+      <view class="py-3 bordedr-bottom--gray" wx:for="{{orderDetails}}" wx:for-item="item" wx:for-index="index">
+        <text style="font-size: 0.9rem;">{{item.menuNameKor}} ({{item.menuNameCny}})</text>
+        <text>\n</text>
+        <text>数量: {{item.quantity}}</text>
+        <text>\n</text>
+        <text>价: ￥{{item.priceCny}} ({{item.priceKor}} won)</text>
+      </view>
+      <view class="py-3">
+        <text style="font-size: 0.8rem;">餐厅名 : {{orderDetails[0].cafeteriaNameKor}} ({{orderDetails[0].cafeteriaNameCny}})</text>
+        <text>\n</text>
+        <text style="font-size: 0.8rem;">订购日期: {{orderDetails[0].orderDate}}</text>
+        <text>\n</text>
+        <text style="font-size: 0.8rem;">总价: ￥{{totalPriceCny}} ({{totalPriceKor}} won)</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+
+
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goMenu" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o">购物篮</van-tabbar-item>
+</van-tabbar>
+

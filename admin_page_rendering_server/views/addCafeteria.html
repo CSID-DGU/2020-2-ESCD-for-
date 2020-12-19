@@ -1,0 +1,59 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mb-3 border-bottom pb-3">식당 추가</h2>
+  <div>
+    <form
+      class="rounded shadow-sm border p-5"
+      action="/cafeteria/add"
+      method="POST"
+    >
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="cafeterium-name-ko">식당명</label>
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="cafeterium-name-ko"
+            name="cafeterium_name_ko"
+            placeholder="한글"
+            aria-describedby="inputCafeteriumName"
+          />
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="cafeterium-name-ch"
+            name="cafeterium_name_ch"
+            placeholder="중문"
+            aria-describedby="inputCafeteriumName"
+          />
+        </div>
+      </div>
+      <div class="row mb-5">
+        <div class="col-4">
+          <label for="cafeterium-location">식당 위치</label>
+        </div>
+        <div class="col-8">
+          <input
+            type="text"
+            class="form-control"
+            id="cafeterium-location"
+            name="cafeterium_location"
+            aria-describedby="inputCafeteriumLocation"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          <button type="submit" class="btn btn-primary">등록하기</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block script %}
+<script></script>
+{% endblock %}

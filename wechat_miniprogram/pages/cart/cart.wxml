@@ -1,0 +1,46 @@
+<cu-custom bgColor="bg-gradual-orange">
+  <view slot="content">菜篮子</view>
+</cu-custom>
+
+<view style="margin-bottom:45px;">
+  <van-steps
+      steps="{{ steps }}"
+      active="{{ active }}"
+      active-color="orange"
+  />
+    <view class="cu-bar bg-white margin-top solids-bottom">
+      <view class="action sub-title">
+        <text class="text-xl text-bold text-green">菜篮子</text> <!-- 장바구니 -->
+        <text class="text-ABC text-green">Cart</text>
+      </view>
+    </view>
+    <view wx:if="{{cartList.length === 0}}">
+    </view>
+    <view wx:else>
+      <view wx:for="{{cartList}}" wx:for-item="menu" wx:key="menuId">
+        <van-card
+          price="{{menu.price_cny}} ({{menu.price_krw}} won)"
+          title="{{menu.mainDish_ch}}"
+          desc="{{menu.cafeteria_name_ch}} ({{menu.cafeteria_name_ko}})"
+          thumb="{{menu.menuImage}}"
+        >
+        <view slot="delete">
+          <van-button type="warning" size="mini" icon="cross" bind:click="onDelete" data-menu-id="{{menu.menuId}}"></van-button>
+        </view>
+          <view slot="footer">
+            <van-stepper value="{{menu.quantity}}" bind:change="stepperChange" data-menu-id="{{menu.menuId}}"/>
+          </view>
+        </van-card>
+      </view>
+      <view class="bg-gradual-orange padding-xs radius text-center shadow-blur" bindtap="goPayment">
+        <view class="text-cut margin-top-sm text-Abc" style="height:60rpx">结账</view>
+      </view>
+    </view>
+  </view>
+  
+  <van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58" z-index="100">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item icon="shopping-cart">购物篮</van-tabbar-item>
+</van-tabbar>
+

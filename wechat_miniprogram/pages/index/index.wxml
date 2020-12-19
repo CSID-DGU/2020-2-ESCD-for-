@@ -1,0 +1,48 @@
+<cu-custom bgColor="bg-gradual-orange">
+  <view slot="content">主画面</view> 
+</cu-custom>
+<van-button type="danger" size="large" color="rgb(248, 152, 7)" block="true" bind:click="onSubscribe" custom-class="my-1">Subscribe</van-button>
+<van-dialog id="van-dialog"/>
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">位置</text>
+    <text class="text-ABC text-green">Location</text>
+  </view>
+</view>
+
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="flex-sub padding-lr padding-bottom">
+        <view class="bg-img only-img" style="text-align:center;">
+          <image class="flex-1 padding-10"src='/resource/map/전체보기.png' style="width:315px;height:202px;"></image>
+        </view>
+  </view>
+</view>
+
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">餐厅</text>
+    <text class="text-ABC text-green">Cafeteria</text>
+  </view>
+</view>
+
+<view class="cu-list grid col-2">
+  <view class="bg-white padding-xs radius text-center shadow-blur">
+  </view>
+    <van-grid gutter="{{ 5 }}" border="{{ true }}" column-num="3" custom-class="btn">
+      <van-grid-item icon="/static/icon/cook.svg" bindtap="navigateToCafeterium" text="花园厨师"  data-name-kor="가든쿡" data-name-cny="花园厨师"/>
+      <van-grid-item icon="/static/icon/dinner.svg" bindtap="navigateToCafeterium" text="锅和面" data-name-kor="팬앤누들" data-name-cny="锅和面"/>
+      <van-grid-item icon="/static/icon/cook2.svg" bindtap="navigateToCafeterium" text="存根" data-name-kor="그루터기" data-name-cny="存根"/>
+      <van-grid-item icon="/static/icon/noodle.svg" bindtap="navigateToCafeterium" text="新工程大楼" data-name-kor="신공학관" data-name-cny="新工程大楼"/>
+      <van-grid-item icon="/static/icon/meat.svg" bindtap="navigateToCafeterium" text="常绿" data-name-kor="상록원" data-name-cny="常绿"/>
+      <van-grid-item icon="/static/icon/more.svg" text="查看全部" bindtap="navigateToCafeterium" data-name-kor="전체보기" data-name-cny="查看全部"/>
+    </van-grid>
+  </view>
+  <view class="bg-white padding-xs radius text-center shadow-blur" style=" margin-bottom: 42px;">
+    
+</view>
+
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58" z-index="50">
+  <van-tabbar-item bindtap="goHome" icon="wap-home">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o" info="{{cntOfCart}}">购物篮</van-tabbar-item>
+</van-tabbar>

@@ -1,0 +1,171 @@
+{% extends 'layout.html' %} {% block content %}
+<div
+  class="container d-flex justify-content-center align-items-center flex-column"
+>
+  <h2 class="mt-5 border-bottom pb-2">학생식당 정보 수정</h2>
+  <div>
+    <form class="rounded shadow-sm border p-5">
+      <input
+        type="hidden"
+        id="cafeteria-id"
+        name="cafeteria_id"
+        value="{{cafeteria.cafeteria_id}}"
+      />
+      <div class="form-group row">
+        <div class="col-3">
+          <label for="name-ko" class="col-form-label">학생식당명</label>
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="name-ko"
+            name="name_ko"
+            placeholder="한글"
+            value="{{cafeteria.name_ko}}"
+          />
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="name-ch"
+            name="nmae_ch"
+            placeholder="중문"
+            value="{{cafeteria.name_ch}}"
+          />
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-3">
+          <label for="business_status" class="col-form-label">영업 상태</label>
+        </div>
+        <div class="col-4">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="business_status"
+            id="status_open" value="true" {{'checked' if
+            cafeteria.business_status == true}} />
+            <label class="form-check-label" for="status_open">열림</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="business_status"
+            id="status_close" value="false" {{'checked' if
+            cafeteria.business_status == false}} />
+            <label class="form-check-label" for="status_close">닫힘</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-3">
+          <label for="location" class="col-form-label">위치</label>
+        </div>
+        <div class="col-8">
+          <input
+            type="text"
+            class="form-control"
+            id="location"
+            name="location"
+            placeholder="위치"
+            value="{{cafeteria.location}}"
+          />
+        </div>
+      </div>
+      <div
+        class="form-group form-row align-items-end justify-content-center mt-5 mb-0"
+      >
+        <button type="submit" class="btn btn-primary btn-modify">
+          수정하기
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">에러 메시지</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="message"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block stylesheet %} {% endblock %} {% block script %}
+<script>
+  $(".btn-modify").click(function (event) {
+    try {
+      event.preventDefault();
+      const cafeteriaId = $("#cafeteria-id").val();
+      const nameKo = $("#name-ko").val();
+      if (!nameKo) {
+        throw new Error("변경할 식당명을 한글로 입력해주세요.");
+      }
+      const nameCh = $("#name-ch").val();
+      if (!nameCh) {
+        throw new Error("변경할 식당명을 중문으로 입력해주세요.");
+      }
+      const statusOpen = $("#status_open").is(":checked");
+      const statusClose = $("#status_close").is(":checked");
+      if (!statusOpen && !statusClose) {
+        throw new Error("영업 상태를 선택해야 합니다.");
+      }
+      const location = $("#location").val();
+      if (!location) {
+        throw new Error("위치를 입력해주세요.");
+      }
+
+      axios
+        .put("/cafeteria", {
+          cafeteria_id: cafeteriaId,
+          name_ko: nameKo,
+          name_ch: nameCh,
+          business_status: statusOpen,
+          location: location,
+        })
+        .then(function (response) {
+          window.location.href = "/";
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    } catch (error) {
+      document.querySelector(".message").textContent = error.message;
+      $(".modal").modal("show");
+    }
+
+    // if (password.length >= 6) {
+    //   axios
+    //     .patch("/admin", {
+    //       admin_id: $("#admin-id").val(),
+    //       password: password,
+    //     })
+    //     .then(function (response) {
+    //       location.href = "/";
+    //     })
+    //     .catch(function (error) {
+    //       document.querySelector(".message").textContent = error.message;
+    //       $(".modal").modal("show");
+    //     });
+    // } else {
+    //   document.querySelector(".message").textContent =
+    //     "비밀번호는 6글자 이상이어야 합니다.";
+    //   $(".modal").modal("show");
+    // }
+  });
+</script>
+{% endblock %}

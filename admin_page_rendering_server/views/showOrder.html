@@ -1,0 +1,231 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container mx-0 px-0 mt-5">
+  <div class="row justify-content-between border-bottom mb-3 pb-3">
+    <h2>{{user.cafeteria_name}} 주문 현황</h2>
+  </div>
+  <section class="row">
+    <div class="card-deck justify-content-start px-4">
+      {% for orderNumber, orderList in orderListObj %}
+      <div
+        class="card mb-5"
+        style="min-width: 250px; max-width: 250px"
+        data-open-id="{{orderList[0].order_user_id}}"
+        data-order-number="{{orderList[0].order_number}}"
+      >
+        <div class="card-header text-center position-relative">
+          <h5>식권 번호: {{orderList[0].meal_ticket_number}}</h5>
+          <button type="button" 
+            class="close position-absolute" aria-label="Close" 
+            style="top: 40%; right: 10px; transform: translateY(-50%); outline: none;"
+            data-order-number= "{{orderList[0].order_number}}"
+            onclick="onCancel(this)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="card-body position-relative">
+          {% for orderItem in orderListObj[orderNumber] %} {% if loop.last %}
+          <p class="card-text">
+            {{orderItem.name_ko}} x {{orderItem.quantity}}
+          </p>
+          <p class="card-text position-absolute" style="bottom: 10px">
+            <small class="text-muted">{{orderItem.order_date}}</small>
+          </p>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          <button
+            class="btn btn-primary btn-sm btn-notify"
+            data-open-id="{{orderItem.order_user_id}}"
+            data-order-number="{{orderItem.order_number}}"
+            onclick="onNotify(this)"
+          >
+            수령 알림
+          </button>
+          <button
+            class="btn btn-primary btn-sm btn-complete"
+            data-open-id="{{orderItem.order_user_id}}"
+            ="{{orderItem.order_user_id}}"
+            data-order-number="{{orderItem.order_number}}"
+            onclick="onComplete(this)"
+          >
+            수령 완료
+          </button>
+        </div>
+        {% else %}
+        <p class="card-text mb-1">
+          {{orderItem.name_ko}} x {{orderItem.quantity}}
+        </p>
+        {% endif %} {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    <div
+      class="modal fade"
+      id="confirmModal"
+      tabindex="-1"
+      aria-labelledby="deleteMenu"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary modal-confirm-btn">
+              확인
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary modal-cancel-btn"
+              data-dismiss="modal"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %} {% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.min.js"></script>
+<script>
+  const socket = io.connect("http://localhost:8005", {
+    query: document.cookie,
+  });
+
+  socket.on("order", function (orderInfo) {
+    console.log("주문 도착");
+    console.dir(orderInfo);
+    $(
+      ".card-deck"
+    ).append(`<div class="card mb-5" style="min-width: 250px; max-width: 250px" data-open-id="${orderInfo.open_user_id}"
+        data-order-number="${orderInfo.orderNumber}">
+        <div class="card-header text-center position-relative">
+            <h5>식권 번호: ${orderInfo.ticketNumber}</h5>
+            <button type="button" class="close position-absolute" aria-label="Close" style="top: 40%; right: 10px; transform: translateY(-50%); outline: none;" data-order-number="${orderInfo.orderNumber}" onclick="onCancel(this)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="card-body position-relative">
+          ${orderInfo.orderList
+            .map(function (orderItem, index) {
+              if (index < orderInfo.orderList.length - 1) {
+                return `<p class="card-text mb-1">${orderItem.mainDish_kor} x ${orderItem.quantity}</p>`;
+              } else {
+                return `<p class="card-text">${orderItem.mainDish_kor} x ${orderItem.quantity}</p>`;
+              }
+            })
+            .join(" ")}
+          <p class="card-text position-absolute" style="bottom: 10px">
+            <small class="text-muted">${orderInfo.orderDateTime}</small>
+          </p>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          <button class="btn btn-primary btn-sm btn-notify" data-open-id=${
+            orderInfo.open_user_id
+          } data-order-number="${orderInfo.orderNumber}" onclick="onNotify(this)">수령 알림</button>
+          <button class="btn btn-primary btn-sm btn-complete" data-open-id=${
+            orderInfo.open_user_id
+          } data-order-number="${orderInfo.orderNumber}" onclick="onComplete(this)">수령 완료</button>
+        </div>
+      </div>`);
+  });
+  const $modalTitle = document.querySelector("#confirmModal .modal-title");
+  const $modalBody = document.querySelector("#confirmModal .modal-body");
+  const $modalConfirmBtn = document.querySelector(
+    "#confirmModal .modal-confirm-btn"
+  );
+
+
+  function onNotify (eventTarget) {
+    $modalTitle.textContent = "수령 알림";
+    $modalBody.textContent = "결제자에게 수령 알림을 보내시겠습니까?";
+    $modalConfirmBtn.dataset.kind = "notify";
+    $modalConfirmBtn.dataset.orderNumber =
+    eventTarget.dataset.orderNumber;
+    $("#confirmModal").modal("show");
+  }
+
+  function onComplete (eventTarget) {
+    $modalTitle.textContent = "수령 완료";
+    $modalBody.textContent = "메뉴 수령 완료 처리하겠습니까?";
+    $modalConfirmBtn.dataset.kind = "complete";
+    $modalConfirmBtn.dataset.orderNumber =
+    eventTarget.dataset.orderNumber;
+
+    $("#confirmModal").modal("show");
+  }
+
+  function onCancel (eventTarget) {
+    console.dir(eventTarget.dataset);
+    $modalTitle.textContent = "주문 취소";
+    $modalBody.textContent = "주문을 취소하시겠습니까?";
+    $modalConfirmBtn.dataset.kind = "cancel";
+    $modalConfirmBtn.dataset.orderNumber = eventTarget.dataset.orderNumber;
+
+    $("#confirmModal").modal("show");
+  }
+
+
+  $("#confirmModal .modal-confirm-btn").click(function (event) {
+    event.preventDefault();
+
+    $("#confirmModal").modal("hide");
+    if (event.currentTarget.dataset.kind === "notify") {
+      axios
+        .post(`/order/notify`, {
+          orderNumber: parseInt(event.currentTarget.dataset.orderNumber),
+        })
+        .then(function (response) {
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    } else if (event.currentTarget.dataset.kind === "complete") {
+      $("#confirmModal").modal("hide");
+      axios
+        .patch(`/order`, {
+          orderNumber: parseInt(event.currentTarget.dataset.orderNumber),
+        })
+        .then(function (response) {
+          const $cardDOM = document.querySelector(
+            `.card[data-order-number="${event.currentTarget.dataset.orderNumber}"]`
+          );
+          $cardDOM.remove();
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    } else if (event.currentTarget.dataset.kind === "cancel") {
+      $("#confirmModal").modal("hide");
+      console.log("cancel 버튼 클릭");
+      console.dir(event.currentTarget.dataset);
+      axios.delete(`/order`, {
+        data: {
+          orderNumber: parseInt(event.currentTarget.dataset.orderNumber)
+        }
+      })
+      .then(function (response) {
+        console.dir(response.data);
+        const $cardDOM = document.querySelector(
+            `.card[data-order-number="${event.currentTarget.dataset.orderNumber}"]`
+          );
+        $cardDOM.remove();
+      })
+      .catch(function (error) {
+        console.error(error);
+      })
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+/* pages/SangRokWon/SangRokWon.wxss */
+
+.button .van-card__content{
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  display: flex;
+  margin-left: 12px
+}
+
+.button .van-card__title{
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  display: flex
+}
+
+
+.van-tabbar-item .van-tabbar-item__text {
+  font-size: smaller;
+}
+
+.van-hairline--top-bottom.van-tabbar.van-tabbar--fixed.van-tabbar--safe{
+  height: 40px;
+}
+
+.van-tabbar-item .van-tabbar-item__icon {
+  margin-bottom:0px
+}
+
+.flex-sub.padding-lr.padding-bottom .bg-img.only-img {
+  text-align: left;
+  margin-top: -10px;
+  width: 315px;
+  margin-left: -10px;
+  margin-bottom: -22px;
+}
+
+.cu-bar.bg-white.margin-top.solids-bottom {
+  margin-top: 5px;
+}

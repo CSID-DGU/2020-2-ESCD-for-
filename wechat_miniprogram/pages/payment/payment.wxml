@@ -1,0 +1,41 @@
+<cu-custom bgColor="bg-gradual-orange" isBack="{{true}}">
+  <view slot="backText">往后</view>
+  <view slot="content">结清账</view>
+</cu-custom>
+
+<van-steps
+      steps="{{ steps }}"
+      active="{{ active }}"
+      active-color="orange"/>
+
+    <view class="cu-bar bg-white margin-top solids-bottom">
+      <view class="action sub-title">
+        <text class="text-xl text-bold text-green">结账</text> <!-- 결제 -->
+        <text class="text-ABC text-green">Pay</text>
+      </view>
+    </view>
+
+<!-- <image class='image_size' mode='scaleToFill' src="/resource/image/qrcode.PNG"></image> -->
+
+<view style="margin-bottom:45px;" wx:if="{{showList}}">
+  <view wx:for="{{showList}}" wx:key="menuId" wx:for-item="item">
+    <button size="default" class="button" bindtap="navigateToDetail" data-id="{{menu.menuId}}">
+      <van-card
+        price="{{item.totalPriceCNY}} ({{item.totalPriceKRW}} won)"
+        title="{{item.title}}"
+        thumb="{{item.thumb}}"
+        desc="{{item.cafeterium_name_ch}} ({{item.cafeterium_name_ko}})"
+        lazy-load="{{true}}"
+      />
+    </button>
+  </view>
+  <view class="bg-gradual-orange padding-xs radius text-center shadow-blur" bindtap="pay">
+    <view class="text-cut margin-top-sm text-Abc" style="height:60rpx">结账</view> <!-- 결제 -->
+  </view>
+</view>
+
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o">购物篮</van-tabbar-item>
+</van-tabbar>

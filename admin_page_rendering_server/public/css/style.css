@@ -1,0 +1,70 @@
+.nav-bar {
+  z-index: 1000;
+}
+
+.width-0px {
+  min-width: 0px;
+  max-width: 0px;
+  display: none;
+}
+
+.width-250px {
+  max-width: 250px;
+  min-width: 250px;
+  display: block;
+}
+
+.ml-250px {
+  margin-left: 250px;
+}
+
+.transparent-dark {
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  z-index: -1;
+  display: none;
+}
+
+.visible {
+  z-index: 10;
+  display: block;
+}
+/* 
+.transition-ml {
+  transition: all 0.5s;
+}
+
+.transition-all {
+  transition: all 0.5s;
+} */
+
+header h1 a {
+  font-size: 1.2rem;
+}
+
+header a {
+  font-size: 0.6rem;
+}
+
+@media screen and (min-width: 576px) {
+  header h1 a {
+    font-size: 2rem;
+  }
+
+  header a {
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  header h1 a {
+    font-size: 2rem;
+  }
+  header a {
+    font-size: 1rem;
+  }
+}
+
+.nav-link:hover {
+  color: #c3c3c3 !important;
+}

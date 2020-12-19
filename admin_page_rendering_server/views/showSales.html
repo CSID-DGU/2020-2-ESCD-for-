@@ -1,0 +1,209 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container mx-0 px-0 mt-5">
+  <div class="row justify-content-between border-bottom mb-3 pb-3">
+    <h2>{{user.cafeteria_name}} 매출 확인</h2>
+
+    <form
+      action="/show-sales"
+      method="GET"
+      class="d-flex align-items-end form-inline"
+    >
+      <div class="form-row">
+        <div class="col">
+          <input
+            type="text"
+            placeholder="조회 시작 날짜 선택"
+            class="form-control"
+            id="startDate"
+            name="start_date"
+          />
+        </div>
+        <div class="col">
+          <input
+            type="text"
+            placeholder="조회 끝 날짜 선택"
+            class="form-control"
+            id="endDate"
+            name="end_date"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">조회</button>
+      </div>
+    </form>
+  </div>
+  <section class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="confirmModal"
+      tabindex="-1"
+      aria-labelledby="errorMessage"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"></h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary modal-cancel-btn"
+              data-dismiss="modal"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %} {% block stylesheet %}
+<link rel="stylesheet" href="/css/bootstrap-datepicker.min.css" />
+{% endblock %} {% block script %}
+<script src="/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/bootstrap-datepicker.ko.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script>
+  $("#startDate").datepicker({
+    language: "ko",
+    multidate: false,
+    daysOfWeekDisabled: "0,6",
+    autoclose: true,
+    todayHighlight: true,
+  });
+  $("#endDate").datepicker({
+    language: "ko",
+    multidate: false,
+    daysOfWeekDisabled: "0,6",
+    autoclose: true,
+    todayHighlight: true,
+  });
+  const url = new URL(`${location.href}`);
+  const startDate = url.searchParams.get('start_date');
+  const endDate = url.searchParams.get('end_date');
+
+  {% if user.cafeteria_id %}
+  axios.get(`/sales/cafeteria/{{user.cafeteria_id}}?start_date=${startDate}&end_date=${endDate}`)
+      .then(function(response) {
+        console.log("response");
+        console.dir(response.data.data);
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const $chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: response.data.data.map(obj => `${obj.date}`),
+            datasets: [{
+              data: response.data.data.map(obj => obj.sales),
+              borderColor: 'rgba(54, 162, 235, 1)',
+              fill: false,
+              lineTension: 0
+            }]
+          },
+          options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title: {
+                display: true,
+                text: `${response.data.data[0].date} ~ ${response.data.data[response.data.data.length - 1].date}`
+            },
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        })
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  {% else %}
+  function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+  }
+
+  axios.get(`/sales/cafeteria?start_date=${startDate}&end_date=${endDate}`)
+  .then(function (response) {
+    console.dir(response.data);
+    let startDate;
+    let endDate;
+    const keys = Object.keys(response.data);
+    startDate = keys[0];
+    endDate = keys[keys.length - 1];
+    // let dataset = {
+    //     data: '',
+    //     borderColor: '',
+    //     fill: false,
+    //     linetension: 0
+    // };
+    let result = (Object.values(response.data)[0]).map((cf, index) => {
+        let dataset = {
+            label: cf.name_ko,
+            data: [],
+            borderColor: getRandomColor(),
+            fill: false,
+            linetension: 0
+        };
+        Object.keys(response.data).forEach(date => {
+            dataset = {...dataset, data: [...dataset.data, response.data[date][index].sales]};
+        })
+        return dataset;
+    });
+    console.dir(result);
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const $chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Object.keys(response.data),
+            datasets: result,
+        },
+          options: {
+            legend: {
+                display: true
+            },
+            responsive: true,
+            title: {
+                display: true,
+                text: `${startDate} ~ ${endDate}`
+            },
+
+          }
+    })
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
+  {% endif %}
+
+  function highlightPoint(context) {
+      console.dir(context);
+      const index = 4;
+      return context.dataIndex === 4;
+  }
+</script>
+{% endblock %}

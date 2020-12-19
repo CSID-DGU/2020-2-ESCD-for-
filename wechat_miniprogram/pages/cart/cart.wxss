@@ -1,0 +1,38 @@
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
+
+
+.van-tabbar-item .van-tabbar-item__text {
+  font-size: smaller;
+}
+
+.van-hairline--top-bottom.van-tabbar.van-tabbar--fixed.van-tabbar--safe{
+  height: 40px;
+}
+
+.van-tabbar-item .van-tabbar-item__icon {
+  margin-bottom:0px
+}
+
+
+.cu-bar.bg-white.margin-top.solids-bottom {
+  margin-top: 5px;
+}

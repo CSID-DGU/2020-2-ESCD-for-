@@ -1,0 +1,154 @@
+{% extends 'layout.html' %} {% block content %}
+<div
+  class="container d-flex justify-content-center align-items-center flex-column"
+>
+  <h2 class="mt-5 border-bottom pb-2">관리자 정보 수정</h2>
+  <div>
+    <form class="rounded shadow-sm border p-5">
+      <table class="table table-borderless justify-content-center">
+        <tbody>
+          <tr class="admin-id-row">
+            <td>
+              <label for="admin-id">관리자 아이디</label>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                readonly
+                id="admin-id"
+                name="admin_id"
+                aria-describedby="inputAdminId"
+                value="{{admin.admin_id}}"
+              />
+            </td>
+          </tr>
+          <tr class="password-row">
+            <td>
+              <label for="password">비밀번호</label>
+            </td>
+            <td>
+              <input
+                type="password"
+                class="form-control password"
+                id="password"
+                name="password"
+                aria-describedby="inputPassword"
+              />
+            </td>
+          </tr>
+          <tr class="join-date-row">
+            <td>
+              <label for="join-date">가입일자</label>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                id="join-date"
+                readonly
+                name="created_at"
+                aria-describedby="inputJoinDate"
+                value="{{admin.created_at}}"
+              />
+            </td>
+          </tr>
+          <tr class="admin-type-row">
+            <td>
+              <label for="admin-type">관리 유형</label>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                id="admin-type"
+                readonly
+                name="admin_type"
+                aria-describedby="inputAdminType"
+                value="{{admin.admin_type}}"
+              />
+            </td>
+          </tr>
+          <tr class="cafeterium-row">
+            <td>
+              <label for="cafeterium">관리 식당</label>
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                id="cafeterium"
+                readonly
+                name="cafeterium"
+                aria-describedby="inputCafeterium"
+                value="{{admin.cafeterium_name}}"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="form-group form-row align-items-end justify-content-center mt-5 mb-0"
+      >
+        <button type="submit" class="btn btn-primary btn-modify">
+          수정하기
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">에러 메시지</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="message"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block stylesheet %} {% endblock %} {% block script %}
+<script>
+  $(".btn-modify").click(function (event) {
+    event.preventDefault();
+    const admin_id = $("#admin-id").val();
+    const password = $("#password").val();
+    console.log($("#admin-id").val());
+    console.log($("#password").val().length);
+
+    if (password.length >= 6) {
+      axios
+        .patch("/admin", {
+          admin_id: $("#admin-id").val(),
+          password: password,
+        })
+        .then(function (response) {
+          location.href = "/";
+        })
+        .catch(function (error) {
+          document.querySelector(".message").textContent = error.message;
+          $(".modal").modal("show");
+        });
+    } else {
+      document.querySelector(".message").textContent =
+        "비밀번호는 6글자 이상이어야 합니다.";
+      $(".modal").modal("show");
+    }
+  });
+</script>
+{% endblock %}

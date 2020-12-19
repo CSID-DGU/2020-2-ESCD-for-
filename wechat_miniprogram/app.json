@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/receipt/receipt",
+    "pages/cafeteria/cafeteria",
+    "pages/detail/detail",
+    "pages/cart/cart",
+    "pages/complete/complete",
+    "pages/payment/payment",
+    "pages/orderdetail/orderdetail"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F06806",
+    "navigationBarTitleText": "THIS",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom"
+  },
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  },
+  "sitemapLocation": "sitemap.json"
+}

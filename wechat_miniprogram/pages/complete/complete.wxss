@@ -1,0 +1,72 @@
+.image_size{
+  width:150px;
+  height: 150px;
+  position: relative;
+  left:50%;
+  transform:translateX(-50%);
+}
+.menu{
+  font-size: 50px;
+  color: black;
+  text-align: center;
+ }
+
+.price{
+  font-size: 25px;
+  color: black;
+  text-align: center;
+ }
+
+ .button{
+}
+
+.button .van-card__content{
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  display: flex;
+  margin-left: 12px
+}
+
+.button .van-card__title{
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  display: flex
+}
+
+.button .van-card__desc{
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  display: flex
+}
+
+.button .van-card__price{
+  display: flex
+}
+
+.button .card-index--van-card__tag{
+  display: flex;
+  background-color: darkorange
+}
+
+
+.van-tabbar-item .van-tabbar-item__text {
+  font-size: smaller;
+}
+
+.van-hairline--top-bottom.van-tabbar.van-tabbar--fixed.van-tabbar--safe{
+  height: 40px;
+}
+
+.van-tabbar-item .van-tabbar-item__icon {
+  margin-bottom:0px
+}
+
+.cu-bar.bg-white.margin-top.solids-bottom {
+  margin-top: 5px;
+}

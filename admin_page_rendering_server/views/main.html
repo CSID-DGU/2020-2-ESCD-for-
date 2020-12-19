@@ -1,0 +1,242 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container-fluid mt-5">
+  <div class="row mb-5">
+    {% if user.admin_type === 2 %}
+    <div class="col-12 col-sm-6 col-md-4">
+      <div
+        class="dashboard-box d-flex p-3 border rounded shadow-sm justify-content-around bg-primary text-white"
+      >
+        <dic class="icon-box py-3">
+          <i class="fas fa-utensils" style="font-size: 2rem"></i>
+        </dic>
+        <div class="info-box">
+          <span>오늘의 메뉴 수</span>
+          <h3 class="text-center">{{countOfTodaysMenu}}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <div
+        class="dashboard-box d-flex p-3 border rounded shadow-sm justify-content-around bg-success text-white"
+      >
+        <dic class="icon-box py-3">
+          <i class="fas fa-money-check-alt" style="font-size: 2rem"></i>
+        </dic>
+        <div class="info-box">
+          <span>오늘의 매출액</span>
+          <h3 class="text-center">{{salesAmount}}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <div
+        class="dashboard-box d-flex p-3 border rounded shadow-sm justify-content-around bg-info text-white"
+      >
+        <dic class="icon-box py-3">
+          <i class="fas fa-door-open" style="font-size: 2rem"></i>
+        </dic>
+        <div class="info-box">
+          <span>영업 상태</span>
+          <div class="custom-control custom-switch">
+            {% if businessStatus %}
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="businessStatusSwitch"
+              checked
+            />
+            {% else %}
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              id="businessStatusSwitch"
+            />
+            {% endif %}
+
+            <label
+              class="custom-control-label"
+              for="businessStatusSwitch"
+              id="businessStatusLabel"
+              >{{"열림" if businessStatus else "닫힘"}}</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    {% elif user.admin_type === 0 %}
+    <div class="col-12 col-sm-6 col-md-4">
+      <div
+        class="dashboard-box d-flex p-3 border rounded shadow-sm justify-content-around bg-primary text-white"
+      >
+        <dic class="icon-box py-3">
+          <i class="fas fa-users" style="font-size: 2rem"></i>
+        </dic>
+        <div class="info-box">
+          <span>가입한 관리자 수</span>
+          <h3 class="text-center">
+            {% if count_of_unauthorized_admin %}
+            <span class="text-warning">{{count_of_unauthorized_admin}}</span> /
+            {% endif %} {{count_of_total_admin}}
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <div
+        class="dashboard-box d-flex p-3 border rounded shadow-sm justify-content-around bg-success text-white"
+      >
+        <dic class="icon-box py-3">
+          <i class="fas fa-utensils" style="font-size: 2rem"></i>
+        </dic>
+        <div class="info-box">
+          <span>등록된 식당 수</span>
+          <h3 class="text-center">{{count_of_cafeteria}}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <div
+        class="dashboard-box d-flex p-3 border rounded shadow-sm justify-content-around bg-info text-white"
+      >
+        <dic class="icon-box py-3">
+          <i class="fab fa-elementor" style="font-size: 2rem"></i>
+        </dic>
+        <div class="info-box">
+          <span>등록된 메뉴 수</span>
+          <h3 class="text-center">{{count_of_menus}}</h3>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <canvas id="salesChart"></canvas>
+    </div>
+  </div>
+</div>
+{% if message.length > 1 %}
+<div class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">에러 메시지</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{message}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %} {% endblock %} {% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script>
+  {% if message %}
+  $(".modal").modal("show");
+  {% endif %}
+  {% if user.cafeteria_id %}
+  const $checkbox = $("#businessStatusSwitch");
+  const $label = $("#businessStatusLabel");
+
+  $checkbox.click(function (event) {
+    const status = $(this).is(":checked");
+
+    axios.patch('/cafeteria', {
+      where: {
+        cafeteria_id: {{user.cafeteria_id}}
+      },
+      data: {
+        business_status: status
+      }
+    })
+    .then(function(response) {
+      if (status) {
+        $label.html("열림");
+        $(this).attr("checked", true);
+      } else {
+        $label.html("닫힘");
+        $(this).attr("checked", false);
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  });
+  {% endif %}
+  {% if user.cafeteria_id %}
+    axios.get('/sales/cafeteria/{{user.cafeteria_id}}')
+      .then(function(response) {
+        console.log("response");
+        console.dir(response.data.salesResult);
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const $chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: response.data.salesResult.map(saleResult => `${saleResult.name_ko}(${saleResult.time_classification})`),
+            datasets: [{
+              label: '금일 매출액',
+              data: response.data.salesResult.map(saleResult => saleResult.amount),
+              backgroundColor: new Array(response.data.salesResult.length).fill('rgba(54, 162, 235, 0.2)'),
+              borderColor: new Array(response.data.salesResult.length).fill('rgba(54, 162, 235, 1)'),
+              borderWidth: 1
+            }]
+          },
+          
+        })
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  {% else %}
+    axios.get('/sales')
+      .then(function(response) {
+        console.dir(response.data);
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const $chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: response.data.salesResult.map(saleResult => saleResult.cafeteria_name_ko),
+            datasets: [{
+              label: '금일 매출액',
+              data: response.data.salesResult.map(saleResult => saleResult.sales),
+              backgroundColor: new Array(response.data.count).fill('rgba(54, 162, 235, 0.2)'),
+              borderColor: new Array(response.data.count).fill('rgba(54, 162, 235, 1)'),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            maintainAspectRatio: true,
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }
+              ]
+            }
+          }
+        })
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+
+
+  {% endif %}
+</script>
+
+{% endblock %}

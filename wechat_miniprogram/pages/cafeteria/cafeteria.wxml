@@ -1,0 +1,72 @@
+<!-- 화면 타이틀 -->
+<cu-custom bgColor="bg-gradual-orange" isBack="{{true}}">
+  <view slot="backText">往后</view>
+  <view slot="content">{{cafeteriaNameCny}}</view> <!-- 식당명 -->
+</cu-custom>
+
+<!-- 위치 타이틀 -->
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">位置</text>
+    <text class="text-ABC text-green">Location</text>
+  </view>
+</view>
+<view wx:if="{{!isReady}}" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+  <van-loading color="rgb(243, 123, 29)" size="50px"/>
+</view>
+<view wx:else>
+  <!-- 지도 -->
+  <view class="cu-bar bg-white margin-top solids-bottom">
+    <view class="flex-sub padding-lr padding-bottom">
+      <view class="bg-img only-img" style="text-align:center;">
+        <image class="flex-1 padding-10"src='/resource/map/{{cafeteriaNameKor}}.png' style="width:315px;height:202px;"></image>
+      </view>
+    </view>
+  </view>
+
+  <view class="mb-5">
+    <view class ="menu" wx:for="{{menuOfCafeteria}}" wx:for-item="cafeteria" wx:key="cafeteriaId">
+      <view>
+        <view class="cu-bar bg-white margin-top solids-bottom">
+          <view class="action sub-title">
+            <text class="text-xl text-bold text-green">{{cafeteria.name}}</text>
+            <text class="text-ABC text-green">Menu</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{cafeteria.businessStatus === false}}">
+        <van-card
+            centered="true"
+            desc="没开." /> <!-- 영업중이 아닙니다. -->
+      </view>
+      <view wx:else>
+        <view wx:if="{{cafeteria.menuList.length === 0}}">
+          <van-card
+            centered="true"
+            desc="没有登记的食物菜单." /> <!-- 등록된 메뉴가 없습니다. -->
+        </view>
+        <view wx:else>
+          <view wx:for="{{cafeteria.menuList}}" wx:key="menuId" wx:for-item="menu">
+            <button size="default" class="button" bindtap="navigateToDetail" data-id="{{menu.menuId}}">
+              <van-card
+                price="{{menu.price_cny}} ({{menu.price_krw}} won)"
+                title="{{menu.mainDish.mainDishName}}"
+                thumb="{{menu.menuImage}}"
+                title-class="card-title"
+                desc-class="card-desc"
+                price-class="card-price"
+                lazy-load="{{true}}"
+              />
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58" z-index="100">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o" info="{{cntOfCart}}">购物篮</van-tabbar-item>
+</van-tabbar>

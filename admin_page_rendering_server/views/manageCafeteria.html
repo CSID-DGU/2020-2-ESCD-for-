@@ -1,0 +1,190 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container-fluid row mt-5">
+  <div
+    class="col-12 px-0 border-bottom pb-1 mb-2 d-flex justify-content-between align-items-center"
+  >
+    <h2>식당 관리</h2>
+    <a class="btn btn-primary" href="/add-cafeteria" role="button">식당 등록</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">식당 아이디</th>
+          <th scope="col">식당명</th>
+          <th scope="col">영업 상태</th>
+          <th scope="col">위치</th>
+          <th scope="col">액션</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cafeterium in cafeteria %}
+        <tr data-id="{{admin.admin_id}}">
+          <td>{{cafeterium.cafeteria_id}}</td>
+          <td>{{cafeterium.name_ko}} ({{cafeterium.name_ch}})</td>
+          {% if cafeterium.business_status %}
+          <td>열림</td>
+          {% else %}
+          <td>닫힘</td>
+          {% endif %}
+          <td>{{cafeterium.location}}</td>
+          <td>
+            <div class="d-flex-justify-content-start">
+              <a
+                class="btn btn-success"
+                href="/modify-cafeteria?cafeteriaId={{cafeterium.cafeteria_id}}"
+                role="button"
+                >수정</a
+              >
+              <button
+                class="btn btn-danger action-btn delete-btn"
+                data-id="{{cafeterium.cafeteria_id}}"
+              >
+                삭제
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="modal fade" tabindex="-1" id="notice-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary delete-btn">삭제</button>
+          <button type="button" class="btn btn-secondary cancel-btn">
+            취소
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="d-flex justify-content-center" style="width: 100%">
+    <ul class="pagination">
+      {% if offset + 1 === firstPage %}
+      <li class="page-item disabled">
+        <a
+          class="page-link"
+          href="/manage-cafeteria?offset={{offset - 1}}&limit={{limit}}"
+          tabindex="-1"
+          aria-disabled="true"
+          >Previous</a
+        >
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="/manage-cafeteria?offset={{offset - 1}}&limit={{limit}}"
+          tabindex="-1"
+          aria-disabled="true"
+          >Previous</a
+        >
+      </li>
+      {% endif %} {% for page in range(1, (totalCount // 10 + 1) + 1) %} {% if
+      (offset + 1) === page %}
+      <li class="page-item active" aria-current="page">
+        <a
+          class="page-link"
+          href="/manage-cafeteria?offset={{page - 1}}&limit={{limit}}"
+          >{{page}} <span class="sr-only">(current)</span></a
+        >
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="/manage-cafeteria?offset={{page - 1}}&limit={{limit}}"
+          >{{page}}</a
+        >
+      </li>
+      {% endif %} {% endfor %} {% if offset + 1 === lastPage %}
+      <li class="page-item disabled">
+        <a
+          class="page-link"
+          href="/manage-cafeteria?offset={{offset + 1}}&limit={{limit}}"
+          tabindex="-1"
+          aria-disabled="true"
+          >Next</a
+        >
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="/manage-cafeteria?offset={{offset + 1}}&limit={{limit}}"
+          tabindex="-1"
+          aria-disabled="true"
+          >Next</a
+        >
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endblock %} {% block script %}
+<script>
+  // 식당 관리 페이지 삭제 처리 버튼
+  // 삭제 버튼 클릭 시 모달 창을 띄운다.
+  const $noticeModal = $("#notice-modal");
+
+  $noticeModal.on("hidden.bs.modal", function (event) {
+    $noticeModal.removeAttr("data-id");
+  });
+
+  $(".action-btn").click(function (event) {
+    event.preventDefault();
+    const cafeteriaId = $(this).attr("data-id");
+    $noticeModal.attr("data-id", cafeteriaId);
+
+    if ($(event.currentTarget)[0].classList.contains("delete-btn")) {
+      // 가입 승인 버튼을 누른 경우
+      $noticeModal.find(".modal-title").text("식당 삭제");
+      $noticeModal.find(".modal-body").html("해당 식당을 삭제하시겠습니까?");
+    }
+    $noticeModal.modal("show");
+  });
+
+  $("#notice-modal .delete-btn").click(function (event) {
+    const cafeteriaId = $noticeModal.attr("data-id");
+    console.log("cafeteriaId: " + cafeteriaId);
+
+    axios
+      .delete(`/cafeteria`, {
+        data: {
+          cafeteriaId: cafeteriaId,
+        },
+      })
+      .then((response) => {
+        console.dir(response.data);
+        $noticeModal.modal("hide");
+        location.reload();
+      })
+      .catch((error) => {
+        console.dir(error);
+      });
+  });
+
+  // 모달 취소 버튼 클릭 시 모달 닫기 및 모달 닫기에 따른 이벤트(hidden.bs.modal) 실행
+  $("#notice-modal .cancel-btn").click(function (event) {
+    event.preventDefault();
+    $noticeModal.modal("hide");
+  });
+</script>
+{% endblock %}

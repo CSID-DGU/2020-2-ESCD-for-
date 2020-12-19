@@ -1,0 +1,42 @@
+<cu-custom bgColor="bg-gradual-orange">
+  <view slot="content">结算完毕</view>
+</cu-custom>
+
+<van-steps
+      steps="{{ steps }}"
+      active="{{ active }}"
+      active-color="orange"
+    />
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">发餐券</text>
+    <text class="text-ABC text-green">Ticket</text>
+  </view>
+</view>
+
+<view style="margin-bottom:45px;">
+<view class ="menu" wx:for="{{paymentResult}}" wx:for-item="item" class="button">
+    <van-card class="button"
+      price="{{item.price_cny}} ({{item.price_kor}} won)"
+      tag="餐票编号 : {{item.ticketNumber}}"
+      title="{{item.title}}"
+      thumb="{{item.thumb}}"
+    >
+      <view slot="desc">
+        <text>{{item.orderDate}}</text>
+        <text>\n</text>
+        <text>{{item.cafeteria_name_ch}} ({{item.cafeteria_name_ko}})</text>
+      </view>
+    </van-card>
+</view> 
+
+<view class="bg-gradual-orange padding-xs radius text-center shadow-blur" bindtap="goHome">
+  <view class="text-cut margin-top-sm text-Abc" style="height:60rpx">返回主画面</view>
+</view>
+</view>
+
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o">购物篮</van-tabbar-item>
+</van-tabbar>

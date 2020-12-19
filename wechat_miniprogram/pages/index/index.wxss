@@ -1,0 +1,94 @@
+/* page의 뷰를 처리하는 부분 */
+
+.mystyle{
+  color:coral;
+  font-size:25px;
+}
+
+.blue{
+  color:blue;
+  font-size:25px;
+}
+
+.map_img{
+  margin: 15px;
+  background-color:rgb(245, 214, 153);
+  padding: 10px;
+}
+
+.button{
+  margin:10px;
+  padding: 0px;
+  color: white;
+  background-color: rgb(248, 152, 7);
+}
+
+.button_layout{
+  margin:5px;
+  /* border: 1px solid red; */
+}
+
+.cu-list.grid>.cu-item {
+	position: relative;
+	display: flex;
+	padding: 20rpx;
+	transition-duration: 0s;
+	flex-direction: column
+}
+
+.mb-5 {
+  margin-bottom: 50px;
+}
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
+
+.flex-sub.padding-lr.padding-bottom .bg-img.only-img {
+  text-align: left;
+  margin-top: -10px;
+  width: 315px;
+  margin-left: -10px;
+  margin-bottom: -22px;
+}
+
+.van-tabbar-item .van-tabbar-item__text {
+  font-size: smaller;
+}
+
+.van-hairline--top-bottom.van-tabbar.van-tabbar--fixed.van-tabbar--safe{
+  height: 40px;
+}
+
+.van-tabbar-item .van-tabbar-item__icon {
+  margin-bottom:0px;
+}
+/* 
+.van-tabbar-item .van-tabbar-item__icon .tabbar-item-index--van-tabbar-item__icon__inner.van-icon.van-icon-wap-home {
+  color: orange;
+}
+
+.van-tabbar-item .van-tabbar-item__text {
+  color: orange;
+} */
+
+
+.cu-bar.bg-white.margin-top.solids-bottom {
+  margin-top: 5px;
+}

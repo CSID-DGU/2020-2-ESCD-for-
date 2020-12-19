@@ -1,0 +1,232 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mb-3 border-bottom pb-3">메뉴 추가</h2>
+  <div>
+    <form
+      action="/menu/add"
+      method="POST"
+      class="rounded shadow-sm border p-5"
+      enctype="multipart/form-data"
+    >
+      <div class="form-group row">
+        <div class="col-2">
+          <label for="main-dish" class="col-form-label">메인 메뉴명</label>
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="main-dish"
+            name="main_dish_ko"
+            placeholder="한글"
+          />
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="main-dish"
+            name="main_dish_ch"
+            placeholder="중문"
+          />
+        </div>
+      </div>
+      <div class="form-group row side-dish-row">
+        <div class="col-2">
+          <label for="side-dish" class="col-form-label">반찬</label>
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="side-dish"
+            name="side_dish_ko"
+            placeholder="한글"
+          />
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="side-dish"
+            name="side_dish_ch"
+            placeholder="중문"
+          />
+        </div>
+        <div class="col-2">
+          <button class="btn btn-success" id="add-sd-btn">추가</button>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-2">
+          <label for="menu-price" class="col-form-label">가격</label>
+        </div>
+        <div class="col-8">
+          <input
+            type="number"
+            class="form-control"
+            id="menu-price"
+            name="menu_price"
+          />
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-2">
+          <label for="selling-date" class="col-form-label">판매일</label>
+        </div>
+        <div class="col-8">
+          <div class="input-group date">
+            <input
+              type="text"
+              class="form-control datepicker"
+              id="selling-date"
+              name="selling_date"
+              aria-describedby="inputSellingDate"
+            /><span class="input-group-addon"
+              ><i class="glyphicon glyphicon-th"></i
+            ></span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-2">
+          <label for="classification" class="col-form-label">구분</label>
+        </div>
+        <div class="col-8">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="lunch-checkbox"
+            name="classification"
+            value="점심"
+            style="margin-left: 0"
+          />
+          <label
+            class="form-check-label"
+            for="lunch-checkbox"
+            style="padding-left: 1.25rem; margin-right: 1rem"
+            >중식</label
+          >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="dinner-checkbox"
+            name="classification"
+            value="저녁"
+            style="margin-left: 0"
+          />
+          <label
+            class="form-check-label"
+            for="dinner-checkbox"
+            style="padding-left: 1.25rem"
+            >석식</label
+          >
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-2">
+          <label for="menu-img" class="col-form-label">메뉴 이미지</label>
+        </div>
+        <div class="col-8">
+          <div class="custom-file">
+            <input
+              type="file"
+              class="custom-file-input"
+              id="menu-img"
+              name="menu-img"
+              aria-describedby="selectMenuImage"
+            />
+            <label class="custom-file-label" for="menu-img" id="menu-img-label"
+              >이미지 파일 선택</label
+            >
+          </div>
+        </div>
+      </div>
+      <div
+        class="form-group form-row align-items-end justify-content-center mt-5 mb-0"
+      >
+        <button type="submit" class="btn btn-primary">메뉴 추가</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% if message %}
+<div class="modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">메뉴 등록 실패</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{message}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %} {% endblock %} {% block stylesheet %}
+<link rel="stylesheet" href="/css/bootstrap-datepicker.min.css" />
+{% endblock %} {% block script %}
+<script src="/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/bootstrap-datepicker.ko.min.js"></script>
+<script>
+  // 반찬 추가 버튼 클릭 시
+  $("#add-sd-btn").click(function (event) {
+    event.preventDefault();
+    $(`<div class="form-group row side-dish-row">
+        <div class="col-2">
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="side-dish"
+            name="side_dish_ko"
+            placeholder="한글"
+          />
+        </div>
+        <div class="col-4">
+          <input
+            type="text"
+            class="form-control"
+            id="side-dish"
+            name="side_dish_ch"
+            placeholder="중문"
+          />
+        </div>
+      </div>`).insertAfter($(".side-dish-row").last());
+  });
+
+  // 판매일 선택 버튼 클릭 시
+  $(".form-group .input-group.date").datepicker({
+    clearBtn: true,
+    language: "ko",
+    multidate: true,
+    multidateSeparator: ", ",
+    todayHighlight: true,
+  });
+
+  // 업로드한 파일 선택 시
+  $("#menu-img").on("change", function (event) {
+    if (event.currentTarget.files.length > 0) {
+      $("#menu-img-label").html(event.currentTarget.files[0].name);
+    }
+  });
+  {% if message %}
+    $(".modal").modal('show');
+  {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+<!--pages/detail/detail.wxml-->
+<!-- <text>pages/detail/detail.wxml</text> -->
+
+<cu-custom bgColor="bg-gradual-orange" isBack="{{true}}">
+  <view slot="backText">往后</view> <!-- 뒤로 -->
+  <view slot="content">菜单详细信息</view> <!-- 메뉴 상세정보 -->
+</cu-custom>
+
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">菜单详细信息</text> <!-- 메뉴 상세정보 -->
+    <text class="text-ABC text-green">Detail</text>
+  </view>
+</view>
+<view wx:if="{{!isReady}}" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+  <van-loading color="rgb(243, 123, 29)" size="50px"/>
+</view>
+<view wx:else>
+  <!-- 기본정보 조회, 대표이미지 조회   -->
+  <view class="bg-white padding-xs radius shadow-blur" style="margin-bottom:45px;">
+    <view class="padding-bottom">
+      <!-- 대표이미지 조회   -->
+      <view class="padding-bottom">
+        <view class="bg-img only-img" style="text-align:center;">
+            <image src='{{menu.menuImage}}'></image>
+        </view>
+      </view>
+      <view>
+        <text class="text-xl text-orange pl-1 d-flex justify-content-around">菜单名 : {{menu.mainDish_ch}}</text> <!-- 메뉴명: 메뉴-->
+        <text class="text-xl text-orange d-flex justify-content-around pl-1">小菜 : {{menu.sideDishes}}</text> <!-- 반찬: 반찬1, 반찬2, ... -->
+        <text class="text-xl text-orange d-flex justify-content-around pl-1">价 : ￥{{menu.price_cny}} ({{menu.price_krw}} won)</text> <!-- 가격: 가격-->
+        <text class="text-xl text-orange d-flex justify-content-around pl-1">餐 厅 名 : {{menu.cafeteria_name_ch}}</text> <!-- 식당명: 식당-->
+      </view>
+    </view>
+    <van-dialog id="van-dialog" />
+
+    <!-- 콘텐츠개요 조회   -->  
+    <view class="bg-gradual-orange padding-xs radius text-center shadow-blur">
+      <view class="text-cut margin-top-sm text-Abc" style="height:60rpx"  bindtap="addToCart">装菜篮子</view> <!-- 장바구니 담기 -->
+    </view>
+  </view>
+</view>
+
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58" z-index="100">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="orders-o">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o" info="{{cntOfCart}}">购物篮</van-tabbar-item>
+</van-tabbar>

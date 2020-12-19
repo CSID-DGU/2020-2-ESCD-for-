@@ -1,0 +1,42 @@
+<!--pages/menu/menu.wxml-->
+<!--닉네임, 아바타 정보, 위챗에서 사용하는 언어, 성별, 위치
+    소스에 있는 변수 쓸때는 중괄호 2번해서 넣음. 
+-->
+
+<cu-custom bgColor="bg-gradual-orange">
+  <view slot="content">订单历史</view>
+</cu-custom>
+
+<view class="cu-bar bg-white margin-top solids-bottom">
+  <view class="action sub-title">
+    <text class="text-xl text-bold text-green">订单历史</text>
+    <text class="text-ABC text-green">Receipt</text>
+  </view>
+</view>
+<view wx:if="{{!isReady}}" class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+  <van-loading color="rgb(243, 123, 29)" size="50px"/>
+</view>
+<view wx:else>
+  <view style="margin-bottom: 42px;">
+    <view wx:for="{{orderList}}" wx:for-item="item">
+      <button size='default' class="button" bindtap="goOrderDetail" data-order-number="{{item.orderNumber}}">
+        <van-card class="button"
+          price="{{item.totalPriceCNY}} ({{item.totalPriceKRW}} won)"
+          tag="餐票编号 : {{item.mealTicketNumber}}"
+          title="{{item.title}}"
+          thumb="{{item.menuImage}}"
+        >
+          <view slot="desc" class="d-flex flex-column align-items-start">
+            <view style="line-height: 1.5">{{item.cafeteria_name_ch}} ({{item.cafeteria_name_ko}})</view>
+            <view style="line-height: 1.5">{{item.orderDate}}</view>
+          </view>
+        </van-card>
+      </button>
+    </view>
+  </view>
+</view>
+<van-tabbar v-model="active" active-color="#FF8000" inactive-color="#FAAC58">
+  <van-tabbar-item bindtap="goHome" icon="wap-home-o">首页</van-tabbar-item>
+  <van-tabbar-item bindtap="goReceipt" icon="balance-list">订货明细</van-tabbar-item>
+  <van-tabbar-item bindtap="goCart" icon="shopping-cart-o">购物篮</van-tabbar-item>
+</van-tabbar>
